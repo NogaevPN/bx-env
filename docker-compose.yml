@@ -81,6 +81,21 @@ services:
         aliases:
           - mysql
 
+  postgres:
+    image: postgres
+    container_name: bx-postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${BX_MYSQL_ROOT_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      bx:
+        aliases:
+          - postgres
+
   php-fpm:
     build:
       context: ./php${BX_PHP_VERSION}
@@ -170,6 +185,17 @@ services:
   #    - ${BX_SMTP_REST_PORT}:5081
   #    - ${BX_SMTP_PORT}:5025
 
+  mailcatcher:
+    restart: on-failure
+    image: dockage/mailcatcher:0.8.2
+    ports:
+    - "1080:1080"
+    - "1025:1025"
+    networks:
+      bx:
+        aliases:
+          - mailcatcher
+
 networks:
   bx:
 
@@ -180,6 +206,7 @@ volumes:
       o: bind
       type: none
       device: ${BX_MYSQL_DATA_PATH}
+  postgres_data:
   bx-modules:
     driver: local
     driver_opts:
