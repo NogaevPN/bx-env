@@ -21,45 +21,45 @@ services:
         aliases:
           - redis
 
-  push-server-sub:
-    image: ikarpovich/bitrix-push-server
-    container_name: bx-push-sub
-    restart: always
-    build:
-      context: ./push-server
-    environment:
-      - REDIS_HOST=redis
-      - LISTEN_HOSTNAME=0.0.0.0
-      - LISTEN_PORT=${BX_PUSH_SUB_PORT}
-      - SECURITY_KEY=${BX_PUSH_SECURITY_KEY}
-      - MODE=sub
-    ports:
-      - ${BX_PUSH_SUB_PORT}:${BX_PUSH_SUB_PORT}
-    labels:
-      - traefik.port=${BX_PUSH_SUB_PORT}
-      - traefik.protocol=http
-      - traefik.frontend.rule=Host:${BX_PUSH_SUB_HOST}
-    networks:
-      bx:
-        aliases:
-          - ${BX_PUSH_SUB_HOST}
-
-  push-server-pub:
-    image: ikarpovich/bitrix-push-server
-    container_name: bx-push-pub
-    restart: always
-    build:
-      context: ./push-server
-    environment:
-      - REDIS_HOST=redis
-      - LISTEN_HOSTNAME=0.0.0.0
-      - LISTEN_PORT=${BX_PUSH_PUB_PORT}
-      - SECURITY_KEY=${BX_PUSH_SECURITY_KEY}
-      - MODE=pub
-    networks:
-      bx:
-        aliases:
-          - ${BX_PUSH_PUB_HOST}
+#  push-server-sub:
+#    image: ikarpovich/bitrix-push-server
+#    container_name: bx-push-sub
+#    restart: always
+#    build:
+#      context: ./push-server
+#    environment:
+#      - REDIS_HOST=redis
+#      - LISTEN_HOSTNAME=0.0.0.0
+#      - LISTEN_PORT=${BX_PUSH_SUB_PORT}
+#      - SECURITY_KEY=${BX_PUSH_SECURITY_KEY}
+#      - MODE=sub
+#    ports:
+#      - ${BX_PUSH_SUB_PORT}:${BX_PUSH_SUB_PORT}
+#    labels:
+#      - traefik.port=${BX_PUSH_SUB_PORT}
+#      - traefik.protocol=http
+#      - traefik.frontend.rule=Host:${BX_PUSH_SUB_HOST}
+#    networks:
+#      bx:
+#        aliases:
+#          - ${BX_PUSH_SUB_HOST}
+#
+#  push-server-pub:
+#    image: ikarpovich/bitrix-push-server
+#    container_name: bx-push-pub
+#    restart: always
+#    build:
+#      context: ./push-server
+#    environment:
+#      - REDIS_HOST=redis
+#      - LISTEN_HOSTNAME=0.0.0.0
+#      - LISTEN_PORT=${BX_PUSH_PUB_PORT}
+#      - SECURITY_KEY=${BX_PUSH_SECURITY_KEY}
+#      - MODE=pub
+#    networks:
+#      bx:
+#        aliases:
+#          - ${BX_PUSH_PUB_HOST}
 
   mysql:
     build:
@@ -157,24 +157,29 @@ services:
         aliases:
           - node
 
-  fakesmtp:
-    image: gessnerfl/fake-smtp-server
-    container_name: bx-fakesmtp
-    restart: always
-    networks:
-      bx:
-        aliases:
-          - fakesmtp
-    ports:
-      - ${BX_SMTP_WEB_PORT}:5080
-      - ${BX_SMTP_REST_PORT}:5081
-      - ${BX_SMTP_PORT}:5025
+  #fakesmtp:
+  #  image: gessnerfl/fake-smtp-server
+  #  container_name: bx-fakesmtp
+  #  restart: always
+  #  networks:
+  #    bx:
+  #      aliases:
+  #        - fakesmtp
+  #  ports:
+  #    - ${BX_SMTP_WEB_PORT}:5080
+  #    - ${BX_SMTP_REST_PORT}:5081
+  #    - ${BX_SMTP_PORT}:5025
 
 networks:
   bx:
 
 volumes:
   mysql_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${BX_MYSQL_DATA_PATH}
   bx-modules:
     driver: local
     driver_opts:

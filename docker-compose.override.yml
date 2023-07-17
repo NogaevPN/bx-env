@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+
+  mounts:
+    image: busybox
+    container_name: bx-www
+    volumes:
+      - ${BX_PUBLIC_HTML_PATH}:/var/www/public_html
+      - ${BX_MODULES_PATH}:/media/bitrix/modules
+      - ${BX_LANGS_PATH}:/media/bitrix/langs
+
+  mysql:
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
+
+  php-fpm:
+    extra_hosts:
+      - ${BX_UPDATE_HOST}
+      - sign-proxy.a-team.bx:172.17.0.1
+      - sign-safe.a-team.bx:172.17.0.1
+      - network.a-team.bx:172.17.0.1
+      - adv.a-team.bx:172.17.0.1
+    networks:
+      bx:
+        aliases:
+          - php-fpm
+          - hg.a-team.bx
+          - sign-safe.a-team.bx
+          - sign-proxy.a-team.bx
+          - network.a-team.bx
+          - adv.a-team.bx
+    volumes_from:
+      - mounts
+
+  nginx:
+    extends:
+      file: ./common-services.yml
+      service: server
+    volumes_from:
+      - mounts
+    networks:
+      bx:
+        aliases:
+          - nginx
+          - hg.a-team.bx
+          - sign-proxy.a-team.bx
+          - sign-safe.a-team.bx
+          - adv.a-team.bx
+          - network.a-team.bx
+
+  smtp:
+    build: '../bx24-haraka'
+    container_name: bx24-haraka
+    ports:
+        - "2525:25"

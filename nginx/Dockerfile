@@ -9,6 +9,8 @@ RUN groupadd -g ${CONTAINER_GID} ${CONTAINER_GROUP} && \
     useradd -u ${CONTAINER_UID} -g ${CONTAINER_GID} ${CONTAINER_USER}
 
 COPY ./etc/ /etc/nginx/
+COPY ./certs/*.key /etc/ssl/private/
+COPY ./certs/*.crt /etc/ssl/certs/
 
 RUN envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
