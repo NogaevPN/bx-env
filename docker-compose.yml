@@ -80,6 +80,22 @@ services:
       bx:
         aliases:
           - mysql
+          
+  postgres:
+    image: postgres
+    container_name: bx-postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${BX_MYSQL_ROOT_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      bx:
+        aliases:
+          - postgres
+
 
   php-fpm:
     build:
@@ -107,6 +123,7 @@ services:
       - ${BX_LOGS_PATH}/php-fpm:/var/log/php-fpm
       - bx-public:/var/www/public_html
       - bx-modules:/media/bitrix/modules
+      - bx-langs:/media/bitrix/langs
     extra_hosts:
       - ${BX_UPDATE_HOST}
     networks:
@@ -143,6 +160,9 @@ services:
       bx:
         aliases:
           - nginx
+          - bitrix24.localhost
+          - bxutf.localhost
+          - localhost
 
   node:
     build:
@@ -170,11 +190,23 @@ services:
       - ${BX_SMTP_REST_PORT}:5081
       - ${BX_SMTP_PORT}:5025
 
+  mailcatcher:
+    restart: on-failure
+    image: dockage/mailcatcher:0.8.2
+    ports:
+    - "1080:1080"
+    - "1025:1025"
+    networks:
+      bx:
+        aliases:
+          - mailcatcher
+
 networks:
   bx:
 
 volumes:
   mysql_data:
+  postgres_data:
   bx-modules:
     driver: local
     driver_opts:
@@ -187,3 +219,9 @@ volumes:
       o: bind
       type: none
       device: ${BX_PUBLIC_HTML_PATH}
+  bx-langs:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/nogaevpn/bitrix_repos/langs

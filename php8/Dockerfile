@@ -27,6 +27,7 @@ RUN apt-get update \
         zlib1g-dev \
         libpng-dev \
         libxml2-dev \
+        libpq-dev \
         --no-install-recommends \
     && pecl install apcu-${APCU_VERSION} \
     && docker-php-ext-enable apcu \
@@ -34,7 +35,7 @@ RUN apt-get update \
     && docker-php-ext-enable memcached \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install mysqli pdo_mysql opcache exif intl sockets bz2 zip \
+    && docker-php-ext-install mysqli pdo_mysql opcache exif intl sockets bz2 zip pgsql pdo_pgsql \
     && docker-php-ext-configure opcache --enable-opcache \
     && rm -rf /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
     && pecl install xdebug && docker-php-ext-enable xdebug
