@@ -26,6 +26,7 @@ services:
         aliases:
           - php-fpm
           - hg.a-team.bx
+          - pg.a-team.bx
           - sign-safe.a-team.bx
           - sign-proxy.a-team.bx
           - network.a-team.bx
@@ -44,6 +45,7 @@ services:
         aliases:
           - nginx
           - hg.a-team.bx
+          - pg.a-team.bx
           - sign-proxy.a-team.bx
           - sign-safe.a-team.bx
           - adv.a-team.bx
