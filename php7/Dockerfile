@@ -28,6 +28,7 @@ RUN apt-get update \
         zlib1g-dev \
         libpng-dev \
         libxml2-dev \
+        exim4-daemon-heavy \
         --no-install-recommends \
     && pecl install imagick apcu-${APCU_VERSION} memcached \
     && docker-php-ext-enable imagick \
@@ -53,6 +54,7 @@ RUN chmod -R 777 /usr/local/etc/php/ \
 COPY ./msmtp /usr/local/etc/msmtp/
 COPY ./conf.d /usr/local/etc/php/conf.d/
 COPY ./php-fpm.d /usr/local/etc/php-fpm.d/
+COPY ./exim4 /etc/exim4/
 
 RUN sed -i "$ a xdebug.client_host="${BX_XDEBUG_IP} /usr/local/etc/php/conf.d/xdebug.ini \
     && sed -i "$ a xdebug.client_port="${BX_XDEBUG_PORT} /usr/local/etc/php/conf.d/xdebug.ini \

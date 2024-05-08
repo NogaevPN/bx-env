@@ -1,7 +1,12 @@
 
-version: '3.8'
-
 services:
+
+  #rabbitmq:
+  #  image: rabbitmq
+  #  hostname: rabbitmq
+  #  restart: always
+  #  ports:
+  #    - 15672:15672
 
   memcache:
     image: memcached:alpine
@@ -162,7 +167,11 @@ services:
           - nginx
           - bitrix24.localhost
           - bxutf.localhost
+          - bxutf.lan
+          - signproxy.localhost
+          - signsafe.localhost
           - localhost
+          - fresh.localhost
 
   node:
     build:
@@ -186,9 +195,9 @@ services:
         aliases:
           - fakesmtp
     ports:
-      - ${BX_SMTP_WEB_PORT}:5080
-      - ${BX_SMTP_REST_PORT}:5081
-      - ${BX_SMTP_PORT}:5025
+      - ${BX_SMTP_WEB_PORT}:8080
+      - ${BX_SMTP_REST_PORT}:8081
+      - ${BX_SMTP_PORT}:8025
 
   mailcatcher:
     restart: on-failure
@@ -200,6 +209,26 @@ services:
       bx:
         aliases:
           - mailcatcher
+          
+  processing:
+    restart: always
+    build:
+      context: ${BX_SIGN_PROCESSING_REPO}
+      args:
+       - PROTO=http
+    environment: 
+      - PKEY_PASS=123456
+      - SIGN_CONFIG_PATH=/data/bx/cert/config.json
+    cap_add: 
+      - SYS_ADMIN
+    volumes:
+      - ${BX_SIGN_PROCESSING_CERTS}:/data/bx/cert
+      - ${BX_SIGN_PROCERSSING_SERVER_SRC}:/data/bx/processing-server/server
+      - ${BX_SIGN_PROCERSSING_APP_SRC}:/data/bx/processing-server/app
+    networks:
+      bx:
+        aliases:
+          - processing
 
 networks:
   bx:

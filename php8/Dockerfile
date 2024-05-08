@@ -28,11 +28,14 @@ RUN apt-get update \
         libpng-dev \
         libxml2-dev \
         libpq-dev \
+        exim4-daemon-heavy \
         --no-install-recommends \
     && pecl install apcu-${APCU_VERSION} \
     && docker-php-ext-enable apcu \
     && pecl install memcached \
+    && pecl install memcache \
     && docker-php-ext-enable memcached \
+    && docker-php-ext-enable memcache \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install mysqli pdo_mysql opcache exif intl sockets bz2 zip pgsql pdo_pgsql \
@@ -59,6 +62,7 @@ RUN chmod -R 777 /usr/local/etc/php/ \
 COPY ./conf.d /usr/local/etc/php/conf.d/
 COPY ./php-fpm.d /usr/local/etc/php-fpm.d/
 COPY ./msmtp /usr/local/etc/msmtp/
+COPY ./exim4 /etc/exim4/
 
 RUN sed -i "$ a xdebug.client_host="${BX_XDEBUG_IP} /usr/local/etc/php/conf.d/xdebug.ini \
     && sed -i "$ a xdebug.client_port="${BX_XDEBUG_PORT} /usr/local/etc/php/conf.d/xdebug.ini \
