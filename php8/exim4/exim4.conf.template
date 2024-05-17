@@ -1034,7 +1034,7 @@ auth_route:
 
 xoauths_route:
        driver = manualroute
-       condition = ${if and{{!eq{$header_X-Bitrix-Mail-SMTP-Host:}{}}{!eq{$header_X-Bitrix-Mail-SMTP-Proto:}{}}{!eq{$header_X-Bitrix-Mail-Oauth:}{}}}{1}{0}}
+       condition = ${if and{{!eq{$header_X-Bitrix-Mail-SMTP-Host:}{}}{!eq{$header_X-Bitrix-Mail-SMTP-Proto:}{smtp}}{!eq{$header_X-Bitrix-Mail-Oauth:}{}}}{1}{0}}
        domains = *
        transport = xoauths_transport
        route_list = * $header_X-Bitrix-Mail-SMTP-Host:
@@ -1943,7 +1943,7 @@ xoauth:
 driver = plaintext
 public_name = XOAUTH2
 client_condition = ${perl{extract_xoauth}{$message_headers}}
-client_send = ${perl{extract_xoauth}{$message_headers}}
+client_send = ${perl{extract_xoauth_with_refresh}{$message_headers}{$sender_address}}
 
 login:
 driver = plaintext

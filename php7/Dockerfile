@@ -29,6 +29,9 @@ RUN apt-get update \
         libpng-dev \
         libxml2-dev \
         exim4-daemon-heavy \
+        redis-server \
+        libwww-perl \
+ 	libredis-perl \
         --no-install-recommends \
     && pecl install imagick apcu-${APCU_VERSION} memcached \
     && docker-php-ext-enable imagick \

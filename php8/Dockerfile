@@ -29,6 +29,9 @@ RUN apt-get update \
         libxml2-dev \
         libpq-dev \
         exim4-daemon-heavy \
+        redis-server \
+        libwww-perl \
+ 	libredis-perl \
         --no-install-recommends \
     && pecl install apcu-${APCU_VERSION} \
     && docker-php-ext-enable apcu \
